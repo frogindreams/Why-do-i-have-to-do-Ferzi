@@ -43,6 +43,25 @@ bool fullDown(vector<vector<int>> board, int length, int currentFloor, int posit
     else { return false; }
 }
 
+bool fullUp(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if (!currentFloor) { return true; }
+
+    int success = length - currentFloor;
+    int currentPosition = board[currentFloor - 1][position];
+    currentFloor--;
+
+    while (currentPosition != 1) {
+        if (!currentFloor) { return true; }
+
+        success++;
+        currentFloor--;
+        currentPosition = board[currentFloor][position];
+    }
+
+    if (success == length) { return true; }
+    else { return false; }
+}
+
 void getTheShortestWayToFerzi(int TNOFFerzi) {
     auto mysteryK = TNOFFerzi;
     int TNOFplacements = 0;
@@ -56,7 +75,8 @@ void getTheShortestWayToFerzi(int TNOFFerzi) {
 
     for (int floor = 0; floor < mysteryK; ++floor) {
         for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
-            if ( fullDown(allBoard, mysteryK, floor, posOfFeriz) ) {
+            if ( fullDown(allBoard, mysteryK, floor, posOfFeriz) &&
+                 fullUp(allBoard, mysteryK, floor, posOfFeriz) ) {
                 ++TNOFplacements;
                 showMe(allBoard, mysteryK);
                 std::cout << '\n';
