@@ -31,7 +31,7 @@ bool fullDown(vector<vector<int>> board, int length, int currentFloor, int posit
     int currentPosition = board[currentFloor + 1][position];
     currentFloor++;
 
-    while (currentPosition != 1) {
+    while (!currentPosition) {
         if (currentFloor == (length - 1)) { return true; } 
 
         success++;
@@ -50,7 +50,7 @@ bool fullUp(vector<vector<int>> board, int length, int currentFloor, int positio
     int currentPosition = board[currentFloor - 1][position];
     currentFloor--;
 
-    while (currentPosition != 1) {
+    while (!currentPosition) {
         if (!currentFloor) { return true; }
 
         success++;
@@ -59,6 +59,139 @@ bool fullUp(vector<vector<int>> board, int length, int currentFloor, int positio
     }
 
     if (success == length) { return true; }
+    else { return false; }
+}
+
+bool fullRight(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if (position == (length - 1)) { return true; }
+
+    int success = position + 1;
+    int currentPosition = board[currentFloor][position + 1];
+    position++;
+
+    while (!currentPosition) {
+        if (position == (length - 1)) { return true; }
+
+        success++;
+        position++;
+        currentPosition = board[currentFloor][position];
+    }
+
+    if (success == length) { return true; }
+    else { return false; }
+}
+
+bool fullLeft(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if (!position) { return true; }
+
+    int success = length - position;
+    int currentPosition = board[currentFloor][position - 1];
+    position--;
+
+    while (!currentPosition) {
+        if (!position) { return true; }
+
+        success++;
+        position--;
+        currentPosition = board[currentFloor][position];
+    }
+
+    if (success == length) { return true; }
+    else { return false; }
+}
+
+int _top_right(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (position == (length - 1)) || (!currentFloor) ) { return 1; }
+
+    int success = position + 1;
+    int currentPosition = board[currentFloor - 1][position + 1];
+    currentFloor--;
+    position++;
+
+    while (!currentPosition) {
+        if ( (position == (length - 1)) || (!currentFloor) ) { return 1; }
+
+        success++;
+        currentFloor--;
+        position++;
+        currentPosition = board[currentFloor][position];
+    }
+
+    if (success == length) { return true; }
+    else { return false; }
+}
+
+int _top_left(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (!position) || (!currentFloor) ) { return 1; }
+
+    int success = length - position;
+    int currentPosition = board[currentFloor - 1][position - 1];
+    currentFloor--;
+    position--;
+
+    while (!currentPosition) {
+        if ( (!position) || (!currentFloor) ) { return 1; }
+
+        success++;
+        currentFloor--;
+        position--;
+        currentPosition = board[currentFloor][position];
+    }
+
+    if (success == length) { return true; }
+    else { return false; }
+}
+
+int _bottom_right(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (currentFloor == (length - 1)) || (position == (length - 1)) ) { return 1; }
+
+    int success = position + 1;
+    int currentPosition = board[currentFloor + 1][position + 1];
+    currentFloor++;
+    position++;
+
+    while (!currentPosition) {
+        if ( (currentFloor == (length - 1)) || (position == (length - 1)) ) { return 1; }
+
+        success++;
+        currentFloor++;
+        position++;
+        currentPosition = board[currentFloor][position];
+    }
+
+    if (success == length) { return true; }
+    else { return false; }
+}
+
+int _bottom_left(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (currentFloor == (length - 1)) || (!position) ) { return 1; }
+
+    int success = length - position;
+    int currentPosition = board[currentFloor + 1][position - 1];
+    currentFloor++;
+    position--;
+
+    while (!currentPosition) {
+        if ( (currentFloor == (length - 1)) || (!position) ) { return 1; }
+
+        success++;
+        currentFloor++;
+        position--;
+        currentPosition = board[currentFloor][position];
+    }
+
+    if (success == length) { return true; }
+    else { return false; }
+}
+
+bool fullAcross(vector<vector<int>> board, int length, int currentFloor, int position) {
+    int final_preps = 0;
+    final_preps += _top_right(board, length, currentFloor, position);
+    final_preps += _top_left(board, length, currentFloor, position);
+    final_preps += _bottom_right(board, length, currentFloor, position);
+    final_preps += _bottom_left(board, length, currentFloor, position);
+
+    if (final_preps == 4) { return true; }
     else { return false; }
 }
 
@@ -76,7 +209,11 @@ void getTheShortestWayToFerzi(int TNOFFerzi) {
     for (int floor = 0; floor < mysteryK; ++floor) {
         for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
             if ( fullDown(allBoard, mysteryK, floor, posOfFeriz) &&
-                 fullUp(allBoard, mysteryK, floor, posOfFeriz) ) {
+                 fullUp(allBoard, mysteryK, floor, posOfFeriz) &&
+                 fullRight(allBoard, mysteryK, floor, posOfFeriz) &&
+                 fullLeft(allBoard, mysteryK, floor, posOfFeriz) &&
+                 fullAcross(allBoard, mysteryK, floor, posOfFeriz)) {
+
                 ++TNOFplacements;
                 showMe(allBoard, mysteryK);
                 std::cout << '\n';
