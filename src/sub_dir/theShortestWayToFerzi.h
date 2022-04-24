@@ -7,6 +7,7 @@ using std::vector;
 #define THESHORTESTWAYTOFERZI_H
 
 int mysteryK;
+int TNOFplacements = 0;
 
 void showMe(vector<vector<int>> board, int length) {
     for (int iterV = 0; iterV < length; ++iterV) {
@@ -27,177 +28,156 @@ vector<vector<int>> shift(vector<vector<int>> allBoard, int mysteryK, int floor,
 bool fullDown(vector<vector<int>> board, int length, int currentFloor, int position) {
     if (currentFloor == (length - 1)) { return true; }
 
-    int success = currentFloor + 1;
     int currentPosition = board[currentFloor + 1][position];
     currentFloor++;
 
     while (!currentPosition) {
         if (currentFloor == (length - 1)) { return true; } 
 
-        success++;
         currentFloor++;
         currentPosition = board[currentFloor][position];
     }
 
-    if (success == length) { return true; }
-    else { return false; }
+    return false;
 }
 
 bool fullUp(vector<vector<int>> board, int length, int currentFloor, int position) {
     if (!currentFloor) { return true; }
 
-    int success = length - currentFloor;
     int currentPosition = board[currentFloor - 1][position];
     currentFloor--;
 
     while (!currentPosition) {
         if (!currentFloor) { return true; }
 
-        success++;
         currentFloor--;
         currentPosition = board[currentFloor][position];
     }
 
-    if (success == length) { return true; }
-    else { return false; }
+    return false;
 }
 
-bool fullRight(vector<vector<int>> board, int length, int currentFloor, int position) {
-    if (position == (length - 1)) { return true; }
+bool _top_right(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (position == (length - 1)) || (!currentFloor) ) { return true; }
 
-    int success = position + 1;
-    int currentPosition = board[currentFloor][position + 1];
-    position++;
-
-    while (!currentPosition) {
-        if (position == (length - 1)) { return true; }
-
-        success++;
-        position++;
-        currentPosition = board[currentFloor][position];
-    }
-
-    if (success == length) { return true; }
-    else { return false; }
-}
-
-bool fullLeft(vector<vector<int>> board, int length, int currentFloor, int position) {
-    if (!position) { return true; }
-
-    int success = length - position;
-    int currentPosition = board[currentFloor][position - 1];
-    position--;
-
-    while (!currentPosition) {
-        if (!position) { return true; }
-
-        success++;
-        position--;
-        currentPosition = board[currentFloor][position];
-    }
-
-    if (success == length) { return true; }
-    else { return false; }
-}
-
-int _top_right(vector<vector<int>> board, int length, int currentFloor, int position) {
-    if ( (position == (length - 1)) || (!currentFloor) ) { return 1; }
-
-    int success = position + 1;
     int currentPosition = board[currentFloor - 1][position + 1];
     currentFloor--;
     position++;
 
     while (!currentPosition) {
-        if ( (position == (length - 1)) || (!currentFloor) ) { return 1; }
+        if ( (position == (length - 1)) || (!currentFloor) ) { return true; }
 
-        success++;
         currentFloor--;
         position++;
         currentPosition = board[currentFloor][position];
     }
 
-    if (success == length) { return true; }
-    else { return false; }
+    return false;
 }
 
-int _top_left(vector<vector<int>> board, int length, int currentFloor, int position) {
-    if ( (!position) || (!currentFloor) ) { return 1; }
+bool _top_left(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (!position) || (!currentFloor) ) { return true; }
 
-    int success = length - position;
     int currentPosition = board[currentFloor - 1][position - 1];
     currentFloor--;
     position--;
 
     while (!currentPosition) {
-        if ( (!position) || (!currentFloor) ) { return 1; }
+        if ( (!position) || (!currentFloor) ) { return true; }
 
-        success++;
         currentFloor--;
         position--;
         currentPosition = board[currentFloor][position];
     }
 
-    if (success == length) { return true; }
-    else { return false; }
+    return false;
 }
 
-int _bottom_right(vector<vector<int>> board, int length, int currentFloor, int position) {
-    if ( (currentFloor == (length - 1)) || (position == (length - 1)) ) { return 1; }
+bool _bottom_right(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (currentFloor == (length - 1)) || (position == (length - 1)) ) { return true; }
 
-    int success = position + 1;
     int currentPosition = board[currentFloor + 1][position + 1];
     currentFloor++;
     position++;
 
     while (!currentPosition) {
-        if ( (currentFloor == (length - 1)) || (position == (length - 1)) ) { return 1; }
+        if ( (currentFloor == (length - 1)) || (position == (length - 1)) ) { return true; }
 
-        success++;
         currentFloor++;
         position++;
         currentPosition = board[currentFloor][position];
     }
 
-    if (success == length) { return true; }
-    else { return false; }
+    return false;
 }
 
-int _bottom_left(vector<vector<int>> board, int length, int currentFloor, int position) {
-    if ( (currentFloor == (length - 1)) || (!position) ) { return 1; }
+bool _bottom_left(vector<vector<int>> board, int length, int currentFloor, int position) {
+    if ( (currentFloor == (length - 1)) || (!position) ) { return true; }
 
-    int success = length - position;
     int currentPosition = board[currentFloor + 1][position - 1];
     currentFloor++;
     position--;
 
     while (!currentPosition) {
-        if ( (currentFloor == (length - 1)) || (!position) ) { return 1; }
+        if ( (currentFloor == (length - 1)) || (!position) ) { return true; }
 
-        success++;
         currentFloor++;
         position--;
         currentPosition = board[currentFloor][position];
     }
 
-    if (success == length) { return true; }
-    else { return false; }
+    return false;
 }
 
 bool fullAcross(vector<vector<int>> board, int length, int currentFloor, int position) {
-    int final_preps = 0;
-    final_preps += _top_right(board, length, currentFloor, position);
-    final_preps += _top_left(board, length, currentFloor, position);
-    final_preps += _bottom_right(board, length, currentFloor, position);
-    final_preps += _bottom_left(board, length, currentFloor, position);
+    bool _top_right_access = _top_right(board, length, currentFloor, position);
+    bool _top_left_access = _top_left(board, length, currentFloor, position);
+    bool _bottom_right_access = _bottom_right(board, length, currentFloor, position);
+    bool _bottom_left_access = _bottom_left(board, length, currentFloor, position);
 
-    if (final_preps == 4) { return true; }
+    if ( _top_right_access && _top_left_access && _bottom_right_access && _bottom_left_access) { return true; }
     else { return false; }
+}
+
+void flashy_dance(vector<vector<int>> allBoard, int mysteryK, int sub_floor) {
+    for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
+        if (true /* fullDown(allBoard, mysteryK, sub_floor, posOfFeriz) &&
+            fullUp(allBoard, mysteryK, sub_floor, posOfFeriz) &&
+            fullAcross(allBoard, mysteryK, sub_floor, posOfFeriz) */) {
+
+            if (!attempts) { return 0; }
+
+            ++TNOFplacements;
+            --attempts;
+            showMe(allBoard, mysteryK);
+            std::cout << '\n';
+        }
+
+        allBoard = shift(allBoard, mysteryK, sub_floor, posOfFeriz);
+    }
+}
+
+int _factorial(int floor) {
+    return (floor == 1 || floor == 0) ? 1 : _factorial(floor - 1) * floor;
+}
+
+void fireworks(vector<vector<int>> allBoard, int mysteryK, int sub_floor) {
+    if (!attempts) { return 0; }
+
+    for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
+        allBoard = shift(allBoard, mysteryK, sub_floor, posOfFeriz);
+            
+        flashy_dance(allBoard, mysteryK, 0);
+
+        if (sub_floor > 0) {
+            fireworks(allBoard, mysteryK, sub_floor - 1);
+        }
+    }
 }
 
 void getTheShortestWayToFerzi(int TNOFFerzi) {
     auto mysteryK = TNOFFerzi;
-    int TNOFplacements = 0;
+    int floor = 0;
     vector<vector<int>> allBoard( mysteryK, vector<int> (mysteryK, 0) );
 
     for (int floor = 0; floor < mysteryK; ++floor) {
@@ -206,21 +186,12 @@ void getTheShortestWayToFerzi(int TNOFFerzi) {
 
     std::cout << "Variantions:" << '\n';
 
-    for (int floor = 0; floor < mysteryK; ++floor) {
-        for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
-            if ( fullDown(allBoard, mysteryK, floor, posOfFeriz) &&
-                 fullUp(allBoard, mysteryK, floor, posOfFeriz) &&
-                 fullRight(allBoard, mysteryK, floor, posOfFeriz) &&
-                 fullLeft(allBoard, mysteryK, floor, posOfFeriz) &&
-                 fullAcross(allBoard, mysteryK, floor, posOfFeriz)) {
+    flashy_dance(allBoard, mysteryK, floor);
 
-                ++TNOFplacements;
-                showMe(allBoard, mysteryK);
-                std::cout << '\n';
-            }
-
-            allBoard = shift(allBoard, mysteryK, floor, posOfFeriz);
-        }
+    ++floor;
+    while (floor < mysteryK) {
+        fireworks(allBoard, mysteryK, floor);
+        ++floor;
     }
 
     std::cout << '\n' << "The number of placements: " << TNOFplacements << '\n';
