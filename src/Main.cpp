@@ -1,5 +1,5 @@
 #include <iostream>
-#include "sub_dir/theShortestWayToFerzi.h"
+#include "modules/theShortestWayToFerzi.h"
 
 int main() {
     int TNOFFerzi;
