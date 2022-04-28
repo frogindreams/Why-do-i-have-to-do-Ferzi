@@ -139,45 +139,62 @@ bool fullAcross(vector<vector<int>> board, int length, int currentFloor, int pos
     else { return false; }
 }
 
-void flashy_dance(vector<vector<int>> allBoard, int mysteryK, int sub_floor) {
-    for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
-        if (true /* fullDown(allBoard, mysteryK, sub_floor, posOfFeriz) &&
-            fullUp(allBoard, mysteryK, sub_floor, posOfFeriz) &&
-            fullAcross(allBoard, mysteryK, sub_floor, posOfFeriz) */) {
-
-            if (!attempts) { return 0; }
-
-            ++TNOFplacements;
-            --attempts;
-            showMe(allBoard, mysteryK);
-            std::cout << '\n';
-        }
-
-        allBoard = shift(allBoard, mysteryK, sub_floor, posOfFeriz);
-    }
-}
-
 int _factorial(int floor) {
     return (floor == 1 || floor == 0) ? 1 : _factorial(floor - 1) * floor;
 }
 
-void fireworks(vector<vector<int>> allBoard, int mysteryK, int sub_floor) {
-    if (!attempts) { return 0; }
+void fullCheckOut(vector<vector<int>> allBoard, int mysteryK) {
+    int status = 0;
 
-    for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
-        allBoard = shift(allBoard, mysteryK, sub_floor, posOfFeriz);
-            
-        flashy_dance(allBoard, mysteryK, 0);
+    for (int floor = 0; floor < mysteryK; ++floor) {
+        for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
+            if (allBoard[floor][posOfFeriz]) {
+                if (fullAcross(allBoard, mysteryK, floor, posOfFeriz) &&
+                    fullUp(allBoard, mysteryK, floor, posOfFeriz) &&
+                    fullDown(allBoard, mysteryK, floor, posOfFeriz)) {
 
-        if (sub_floor > 0) {
-            fireworks(allBoard, mysteryK, sub_floor - 1);
+                    ++status;
+                }
+            }
+        }
+    }
+
+    if (status == mysteryK) {
+        showMe(allBoard, mysteryK);
+        std::cout << '\n';
+        ++TNOFplacements;
+    }
+} 
+
+void showTime(vector<vector<int>> allBoard, int floor, int mysteryK) {
+    if (!floor) {
+        for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
+            if (fullAcross(allBoard, mysteryK, floor, posOfFeriz) &&
+                fullUp(allBoard, mysteryK, floor, posOfFeriz) &&
+                fullDown(allBoard, mysteryK, floor, posOfFeriz)) {
+
+                fullCheckOut(allBoard, mysteryK);
+            }
+
+            allBoard = shift(allBoard, mysteryK, floor, posOfFeriz);
+        }
+    } else {
+        for (int posOfFeriz = 0; posOfFeriz < mysteryK; ++posOfFeriz) {
+            if (fullAcross(allBoard, mysteryK, floor, posOfFeriz) &&
+                fullUp(allBoard, mysteryK, floor, posOfFeriz) &&
+                fullDown(allBoard, mysteryK, floor, posOfFeriz)) {
+
+                fullCheckOut(allBoard, mysteryK);
+            }
+
+            allBoard = shift(allBoard, mysteryK, floor, posOfFeriz);
+            showTime(allBoard, floor - 1, mysteryK);
         }
     }
 }
 
 void getTheShortestWayToFerzi(int TNOFFerzi) {
     auto mysteryK = TNOFFerzi;
-    int floor = 0;
     vector<vector<int>> allBoard( mysteryK, vector<int> (mysteryK, 0) );
 
     for (int floor = 0; floor < mysteryK; ++floor) {
@@ -186,12 +203,8 @@ void getTheShortestWayToFerzi(int TNOFFerzi) {
 
     std::cout << "Variantions:" << '\n';
 
-    flashy_dance(allBoard, mysteryK, floor);
-
-    ++floor;
-    while (floor < mysteryK) {
-        fireworks(allBoard, mysteryK, floor);
-        ++floor;
+    for (int floor = 0; floor < mysteryK; ++floor) {
+        showTime(allBoard, floor, mysteryK);
     }
 
     std::cout << '\n' << "The number of placements: " << TNOFplacements << '\n';
